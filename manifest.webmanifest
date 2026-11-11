@@ -1,0 +1,63 @@
+
+{
+  "name": "Varilla para columnas",
+  "short_name": "Varilla",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Resumen de varilla",
+      "short_name": "Varilla",
+      "description": "Muestra la cuantía y las barras estimadas del último cálculo de columnas.",
+      "tag": "varilla-resumen",
+      "template": "varilla-resumen",
+      "ms_ac_template": "widgets/resumen-template.json",
+      "data": "widgets/resumen-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "widgets/screenshot.png",
+          "sizes": "300x304",
+          "type": "image/png",
+          "label": "Resumen de varilla en el panel de widgets",
+          "platform": "Windows"
+        }
+      ],
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "icon-512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ],
+      "auth": false,
+      "update": 86400,
+      "multiple": false
+    }
+  ]
+}

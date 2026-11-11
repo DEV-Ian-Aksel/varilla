@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Varilla para columnas</title>
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    :root {
+      --fg: #222222;
+      --bg: #ffffff;
+      --line: #dddddd;
+      --accent: #1769aa;
+      --soft: #f5f7fa;
+      --danger: #b42318;
+      --success: #167647;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--fg);
+      background: var(--bg);
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+    }
+
+    #title-bar {
+      position: fixed;
+      z-index: 100;
+      top: env(titlebar-area-y, 0px);
+      left: env(titlebar-area-x, 0px);
+      width: env(titlebar-area-width, 100%);
+      min-height: env(titlebar-area-height, 44px);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--fg);
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      -webkit-app-region: drag;
+      app-region: drag;
+    }
+
+    .app-title {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      -webkit-app-region: no-drag;
+      app-region: no-drag;
+    }
+
+    .toolbar button {
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--fg);
+      background: var(--bg);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+      app-region: no-drag;
+    }
+
+    .toolbar button:hover {
+      background: var(--soft);
+    }
+
+    main {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 105px 20px 48px;
+    }
+
+    h1 {
+      font-size: 27px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 26px 0 12px;
+    }
+
+    .s, small {
+      color: #666666;
+    }
+
+    .g {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      min-width: 0;
+      padding: 11px;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      color: var(--fg);
+      background: var(--bg);
+      font: inherit;
+      font-size: 16px;
+    }
+
+    input:focus, select:focus, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    #o1, #o2 {
+      padding: 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    #o1 p, #o2 p {
+      margin: 5px 0;
+    }
+
+    .badge {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .badge.ok {
+      color: var(--success);
+      background: #eaf7ef;
+    }
+
+    .badge.warn {
+      color: var(--danger);
+      background: #fff0ee;
+    }
+
+    .badge:empty {
+      display: none;
+    }
+
+    small {
+      display: block;
+      margin-top: 12px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      #title-bar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      main {
+        padding-top: 165px;
+      }
+
+      .toolbar {
+        width: 100%;
+      }
+
+      .toolbar button {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .g {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header id="title-bar">
+    <span class="app-title">Calculadora de varillas</span>
+
+    <nav class="toolbar" aria-label="Controles de cálculo">
+      <button type="button" id="clear-btn">Limpiar</button>
+      <button type="button" id="suggestions-btn">Sugerencias</button>
+      <button type="button" id="copy-btn">Copiar</button>
+      <button type="button" id="share-btn">Compartir</button>
+      <button type="button" id="history-btn">Historial</button>
+      <button type="button" id="export-btn">Exportar</button>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Varilla para columnas</h1>
+    <p class="s">Cuantía de acero de referencia del 1% al 8% y estimación de material a comprar.</p>
+
+    <h2>Columna</h2>
+    <div class="g">
+      <label>
+        Ancho (cm)
+        <input id="b" type="number" inputmode="decimal" min="1" step="any" value="20">
+      </label>
+
+      <label>
+        Largo (cm)
+        <input id="h" type="number" inputmode="decimal" min="1" step="any" value="30">
+      </label>
+
+      <label>
+        Altura (m)
+        <input id="alt" type="number" inputmode="decimal" min="0.1" step="any" value="4">
+      </label>
+
+      <label>
+        Núm. de columnas
+        <input id="n" type="number" inputmode="numeric" min="1" step="1" value="1">
+      </label>
+    </div>
+
+    <h2>Varilla longitudinal</h2>
+    <div class="g">
+      <label>
+        Cantidad por columna
+        <input id="nv" type="number" inputmode="numeric" min="1" step="1" value="6">
+      </label>
+
+      <label>
+        Diámetro
+        <select id="dv">
+          <option value="0.71">#3 · 3/8"</option>
+          <option value="1.27" selected>#4 · 1/2"</option>
+          <option value="1.98">#5 · 5/8"</option>
+          <option value="2.85">#6 · 3/4"</option>
+        </select>
+      </label>
+    </div>
+
+    <h2>Estribos</h2>
+    <div class="g">
+      <label>
+        Separación (cm)
+        <input id="sep" type="number" inputmode="decimal" min="1" step="any" value="20">
+      </label>
+
+      <label>
+        Recubrimiento (cm)
+        <input id="rec" type="number" inputmode="decimal" min="0" step="any" value="3">
+      </label>
+    </div>
+
+    <h2>Acero</h2>
+    <div id="o1" aria-live="polite"></div>
+    <div class="badge" id="est" aria-live="polite"></div>
+
+    <h2>Material a comprar (+10% de desperdicio)</h2>
+    <div id="o2" aria-live="polite"></div>
+
+    <small>
+      Se considera varilla comercial de 12 m y estribos de referencia #3.
+      Esta calculadora proporciona estimaciones de material; no sustituye el
+      diseño estructural, la revisión de cargas ni las especificaciones de un
+      profesional responsable. En Windows 11, después de instalar la aplicación,
+      el resumen del último cálculo se puede anclar desde el panel de widgets.
+    </small>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    const defaultValues = {
+      b: "20",
+      h: "30",
+      alt: "4",
+      n: "1",
+      nv: "6",
+      dv: "1.27",
+      sep: "20",
+      rec: "3"
+    };
+
+    const historyKey = "varilla-calculations-v2";
+
+    const format = (value, digits = 2) =>
+      Number(value).toLocaleString("es-MX", {
+        maximumFractionDigits: digits
+      });
+
+    function clearResults(message = "") {
+      $("o1").replaceChildren();
+      $("o2").replaceChildren();
+      $("est").textContent = message;
+      $("est").className = "badge";
+    }
+
+    function addParagraph(container, text) {
+      const p = document.createElement("p");
+      p.textContent = text;
+      container.appendChild(p);
+    }
+
+    function calc() {
+      const b = Number($("b").value);
+      const h = Number($("h").value);
+      const alt = Number($("alt").value);
+      const n = Number($("n").value);
+      const nv = Number($("nv").value);
+      const dv = Number($("dv").value);
+      const sep = Number($("sep").value);
+      const rec = Number($("rec").value);
+
+      const fields = [b, h, alt, n, nv, dv, sep, rec];
+
+      if (fields.some(value => !Number.isFinite(value))) {
+        clearResults("Introduce valores numéricos válidos.");
+        return false;
+      }
+
+      if (
+        b <= 0 || h <= 0 || alt <= 0 ||
+        n < 1 || nv < 1 || sep <= 0 || rec < 0 ||
+        !Number.isInteger(n) || !Number.isInteger(nv) ||
+        !Number.isInteger(n) || !Number.isInteger(nv) ||
+        b <= 2 * rec || h <= 2 * rec
+      ) {
+        clearResults("Revisa los datos: deben ser positivos y el recubrimiento debe ser menor que la mitad de cada lado.");
+        return false;
+      }
+
+      const sectionArea = b * h;
+      const steelArea = nv * dv;
+      const ratio = steelArea / sectionArea * 100;
+
+      // Estimación de longitud de varillas longitudinales.
+      const longitudinalPerColumn = nv * alt;
+      const longitudinalTotal = longitudinalPerColumn * n;
+      const longitudinalWithWaste = longitudinalTotal * 1.10;
+      const longitudinalBars = Math.ceil(longitudinalWithWaste / 12);
+
+      // Estimación de estribos #3.
+      const innerB = (b - 2 * rec) / 100;
+      const innerH = (h - 2 * rec) / 100;
+      const stirrupLength = 2 * (innerB + innerH) + 0.10;
+      const stirrupsPerColumn = Math.ceil((alt * 100) / sep) + 1;
+      const stirrupsTotal = stirrupsPerColumn * n;
+      const stirrupLengthTotal = stirrupsTotal * stirrupLength;
+      const stirrupWithWaste = stirrupLengthTotal * 1.10;
+      const stirrupBars = Math.ceil(stirrupWithWaste / 12);
+
+      addParagraph($("o1"), `Área de la sección: ${format(sectionArea)} cm²`);
+      addParagraph($("o1"), `Área de acero longitudinal: ${format(steelArea)} cm²`);
+      addParagraph($("o1"), `Cuantía longitudinal estimada: ${format(ratio)}%`);
+
+      if (ratio >= 1 && ratio <= 8) {
+        $("est").textContent =
+          "La cuantía está dentro del intervalo de referencia del 1% al 8%. Esto no confirma que el diseño sea estructuralmente adecuado.";
+        $("est").className = "badge ok";
+      } else {
+        $("est").textContent =
+          "La cuantía está fuera del intervalo de referencia del 1% al 8%. Requiere revisión profesional.";
+        $("est").className = "badge warn";
+      }
+
+      addParagraph($("o2"), `Columnas: ${n}`);
+      addParagraph($("o2"), `Varilla longitudinal: ${format(longitudinalTotal)} m sin desperdicio.`);
+      addParagraph($("o2"), `Longitudinal con 10% extra: ${format(longitudinalWithWaste)} m.`);
+      addParagraph($("o2"), `Barras comerciales de 12 m para longitudinales: ${longitudinalBars}.`);
+      addParagraph($("o2"), `Estribos estimados por columna: ${stirrupsPerColumn}.`);
+      addParagraph($("o2"), `Total de estribos: ${stirrupsTotal}.`);
+      addParagraph($("o2"), `Longitud estimada por estribo: ${format(stirrupLength)} m, incluidos 10 cm para cierre.`);
+      addParagraph($("o2"), `Longitud total de estribos con 10% extra: ${format(stirrupWithWaste)} m.`);
+      addParagraph($("o2"), `Barras comerciales de 12 m para estribos #3: ${stirrupBars}.`);
+
+      publishWidget({
+        seccion: `${format(b, 0)} × ${format(h, 0)} cm · ${format(alt)} m · ${n} ${n === 1 ? "columna" : "columnas"}`,
+        cuantia: `${format(ratio)}%`,
+        barrasLong: String(longitudinalBars),
+        barrasEst: String(stirrupBars),
+        estado: ratio >= 1 && ratio <= 8
+          ? "Cuantía dentro del intervalo de referencia del 1% al 8%."
+          : "Cuantía fuera del intervalo de referencia del 1% al 8%."
+      });
+
+      return true;
+    }
+
+    function publishWidget(data) {
+      if (!("serviceWorker" in navigator)) return;
+
+      const message = { type: "widget-data", data };
+      const send = worker => {
+        if (worker) worker.postMessage(message);
+      };
+
+      if (navigator.serviceWorker.controller) {
+        send(navigator.serviceWorker.controller);
+        return;
+      }
+
+      navigator.serviceWorker.ready
+        .then(registration => send(registration.active))
+        .catch(() => {});
+    }
+
+    function readCalculation() {
+      return {
+        date: new Date().toLocaleString("es-MX"),
+        inputs: Object.fromEntries(
+          Object.keys(defaultValues).map(id => [id, $(id).value])
+        ),
+        acero: $("o1").innerText,
+        estado: $("est").innerText,
+        materiales: $("o2").innerText
+      };
+    }
+
+    function getHistory() {
+      try {
+        const value = JSON.parse(localStorage.getItem(historyKey) || "[]");
+        return Array.isArray(value) ? value : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveCalculation() {
+      if (!$("o2").innerText.trim()) return;
+
+      const current = readCalculation();
+      const history = getHistory();
+      const signature = JSON.stringify(current.inputs);
+
+      if (
+        history.length &&
+        JSON.stringify(history[0].inputs) === signature
+      ) {
+        return;
+      }
+
+      history.unshift(current);
+
+      try {
+        localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 20)));
+      } catch {
+        // La calculadora sigue funcionando si el navegador bloquea el almacenamiento.
+      }
+    }
+
+    // 1. Limpiar campos y resultados.
+    $("clear-btn").addEventListener("click", () => {
+      Object.keys(defaultValues).forEach(id => {
+        if ($(id).tagName !== "SELECT") {
+          $(id).value = "";
+        }
+      });
+
+      clearResults();
+    });
+
+    // 2. Mostrar sugerencias para utilizar la calculadora.
+    $("suggestions-btn").addEventListener("click", () => {
+      const suggestions = [
+        "SUGERENCIAS PARA CALCULAR VARILLAS",
+        "",
+        "1. Medidas de la columna",
+        "Introduce el ancho y el largo en centímetros, y la altura en metros.",
+        "",
+        "2. Varillas longitudinales",
+        "Selecciona el diámetro y la cantidad de varillas por columna según el diseño estructural.",
+        "",
+        "3. Estribos",
+        "La separación y el recubrimiento deben respetar los planos y las especificaciones del proyecto.",
+        "",
+        "4. Desperdicio",
+        "La calculadora agrega un 10% estimado para considerar desperdicios. La cantidad real puede variar.",
+        "",
+        "5. Antes de comprar",
+        "Revisa las longitudes comerciales, los cortes, los traslapes y los anclajes necesarios.",
+        "",
+        "IMPORTANTE",
+        "Estas sugerencias no sustituyen el cálculo estructural ni las indicaciones de un profesional responsable."
+      ].join("\n");
+
+      alert(suggestions);
+    });
+
+    // 3. Copiar los resultados.
+    $("copy-btn").addEventListener("click", async () => {
+      if (!$("o2").innerText.trim()) {
+        alert("Primero introduce datos válidos y realiza un cálculo.");
+        return;
+      }
+
+      const result = [
+        "CÁLCULO DE VARILLAS PARA COLUMNAS",
+        "",
+        $("o1").innerText,
+        $("est").innerText,
+        "",
+        "MATERIAL A COMPRAR",
+        $("o2").innerText
+      ].join("\n");
+
+      try {
+        await navigator.clipboard.writeText(result);
+        alert("Resultados copiados al portapapeles.");
+      } catch {
+        const area = document.createElement("textarea");
+        area.value = result;
+        document.body.appendChild(area);
+        area.select();
+
+        const copied = document.execCommand("copy");
+        area.remove();
+
+        alert(
+          copied
+            ? "Resultados copiados."
+            : "No se pudieron copiar los resultados."
+        );
+      }
+    });
+
+    // 4. Consultar y recuperar cálculos anteriores.
+    $("history-btn").addEventListener("click", () => {
+      const history = getHistory();
+
+      if (!history.length) {
+        alert("Todavía no hay cálculos guardados.");
+        return;
+      }
+
+      const list = history.map((item, index) =>
+        `${index + 1}. ${item.date} — ${item.inputs.b} × ${item.inputs.h} cm`
+      ).join("\n");
+
+      const answer = prompt(
+        `HISTORIAL DE CÁLCULOS\n\n${list}\n\nEscribe el número que deseas recuperar:`
+      );
+
+      if (answer === null || answer.trim() === "") return;
+
+      const index = Number(answer) - 1;
+
+      if (
+        !Number.isInteger(index) ||
+        index < 0 ||
+        index >= history.length
+      ) {
+        alert("Selecciona un número válido.");
+        return;
+      }
+
+      Object.entries(history[index].inputs).forEach(([id, value]) => {
+        $(id).value = value;
+      });
+
+      calc();
+    });
+
+    // 5. Exportar el cálculo actual como archivo .txt.
+    $("export-btn").addEventListener("click", () => {
+      if (!$("o2").innerText.trim()) {
+        alert("Primero introduce datos válidos y realiza un cálculo.");
+        return;
+      }
+
+      const calculation = readCalculation();
+
+      const content = [
+        "CÁLCULO DE VARILLAS PARA COLUMNAS",
+        `Fecha: ${calculation.date}`,
+        "",
+        "DATOS DE ENTRADA",
+        ...Object.entries(calculation.inputs).map(
+          ([key, value]) => `${key}: ${value}`
+        ),
+        "",
+        "ACERO",
+        calculation.acero,
+        calculation.estado,
+        "",
+        "MATERIAL A COMPRAR",
+        calculation.materiales,
+        "",
+        "Estimación orientativa. No sustituye el diseño estructural."
+      ].join("\n");
+
+      const blob = new Blob([content], {
+        type: "text/plain;charset=utf-8"
+      });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "calculo-varillas.txt";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+
+    // Compartir los resultados con otras aplicaciones.
+    $("share-btn").addEventListener("click", async () => {
+      if (!$("o2").innerText.trim()) {
+        alert("Primero introduce datos válidos y realiza un cálculo.");
+        return;
+      }
+
+      const calculation = readCalculation();
+
+      const text = [
+        "CÁLCULO DE VARILLAS PARA COLUMNAS",
+        "",
+        "ACERO",
+        calculation.acero,
+        calculation.estado,
+        "",
+        "MATERIAL A COMPRAR",
+        calculation.materiales,
+        "",
+        "Estimación orientativa. No sustituye el diseño estructural."
+      ].join("\n");
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Cálculo de varillas para columnas",
+            text: text
+          });
+        } catch (error) {
+          // Si el usuario cancela el menú de compartir, no mostramos un error.
+          if (error.name !== "AbortError") {
+            alert("No se pudo compartir el contenido. Puedes utilizar el botón Copiar.");
+          }
+        }
+      } else {
+        // Alternativa si el navegador no ofrece la API para compartir.
+        try {
+          await navigator.clipboard.writeText(text);
+          alert("Este navegador no admite compartir directamente. Los resultados se copiaron para que puedas pegarlos en otra aplicación.");
+        } catch {
+          alert("Tu navegador no admite compartir directamente. Utiliza el botón Copiar.");
+        }
+      }
+    });
+
+    // Recalcular y guardar al cambiar los datos.
+    document.querySelectorAll("input, select").forEach(element => {
+      element.addEventListener("input", () => {
+        if (calc()) saveCalculation();
+      });
+
+      element.addEventListener("change", () => {
+        if (calc()) saveCalculation();
+      });
+    });
+
+    calc();
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js");
+    }
+  </script>
+</body>
+</html>
